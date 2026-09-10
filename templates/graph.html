@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Knowledge Graph</title>
+
+    <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+
+    <link rel="stylesheet" href="/static/style.css">
+
+    <style>
+        #graph {
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .topbar {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+
+<div class="overlay"></div>
+
+<div class="topbar">
+    <button onclick="goBack()" style="font-size: 1rem; padding: 10px 20px;">⬅ Back to Dashboard</button>
+</div>
+
+<div id="graph"></div>
+
+<!-- Slide-in Topic Detail Sidebar -->
+<div id="detailPanel" class="detail-sidebar">
+    <div class="sidebar-header">
+        <h3 style="margin: 0; color: #38bdf8; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Topic Details</h3>
+        <button onclick="closeSidebar()" class="close-btn">&times;</button>
+    </div>
+    <div class="sidebar-content">
+        <h2 id="topicTitle" style="margin-top: 10px; font-size: 1.6rem; line-height: 1.2;"></h2>
+        
+        <div class="explanation-section" style="margin-top: 20px;">
+            <h4 style="margin: 0 0 8px; color: #cbd5e1;">Theoretical significance and applications:</h4>
+            <div id="topicExplanation" class="explanation-text">
+                Select a topic node on the knowledge graph to view detailed explanations.
+            </div>
+        </div>
+
+        <div class="resources-section" style="margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
+            <h4 style="margin: 0 0 10px; color: #cbd5e1;">Study Resource:</h4>
+            <div id="topicLinks">
+                <!-- Populate dynamically in JS -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/static/graph.js"></script>
+</body>
+</html>

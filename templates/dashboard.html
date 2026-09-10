@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="overlay"></div>
+
+<div class="card" style="max-width:900px; margin:40px auto;">
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h1>📊 AI Learning Dashboard</h1>
+        <button onclick="window.location.href='/'" style="background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2);">🏡 Home</button>
+    </div>
+
+    <div class="card domain-card" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+        <div>
+            <h2 style="margin-top:0; font-size:1.2rem; color:#38bdf8; margin-bottom: 5px;">Current Domain</h2>
+            <p id="domain" style="font-size:1.4rem; font-weight:bold; margin:0;"></p>
+        </div>
+        <div id="levelBadgeContainer"></div>
+    </div>
+
+    <!-- Learning Path Checklist -->
+    <div class="card">
+        <h2 style="margin-top:0; color:#cbd5e1;">📋 Full Learning Path</h2>
+        <p style="color:#94a3b8; font-size:0.85rem; margin-top:-5px; margin-bottom:15px;">The recommended sequence of concepts to master this domain. Click on any topic in the Knowledge Graph to explore detailed explanations.</p>
+        <ul id="learning_path" class="interactive-list checklist"></ul>
+    </div>
+
+    <div style="display: flex; gap: 15px; margin-top: 25px;">
+        <a href="/graph" style="flex: 1;">
+            <button style="width: 100%; padding: 14px; font-size: 1.1rem;">🧠 View Interactive Knowledge Graph</button>
+        </a>
+    </div>
+
+</div>
+
+<script src="/static/script.js"></script>
+</body>
+</html>

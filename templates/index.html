@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Learning System</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        * { box-sizing: border-box; }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .tab-btn {
+            background: rgba(255,255,255,0.1);
+            color: #cbd5e1;
+            border: 1px solid rgba(255,255,255,0.15);
+            padding: 10px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .tab-btn.active {
+            background: #38bdf8;
+            color: #0f172a;
+            border-color: #38bdf8;
+        }
+
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        .upload-zone {
+            border: 2px dashed rgba(56, 189, 248, 0.4);
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+            color: #94a3b8;
+            position: relative;
+        }
+
+        .upload-zone:hover,
+        .upload-zone.dragover {
+            border-color: #38bdf8;
+            background: rgba(56, 189, 248, 0.06);
+            color: #e2e8f0;
+        }
+
+        .upload-zone input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+
+        .upload-icon { font-size: 2.5rem; margin-bottom: 10px; }
+        .file-name { margin-top: 12px; color: #38bdf8; font-weight: 600; font-size: 0.9rem; }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 24px 0 20px;
+            color: #475569;
+            font-size: 0.85rem;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255,255,255,0.08);
+        }
+
+        .career-btn {
+            width: 100%;
+            padding: 14px;
+            background: rgba(56,189,248,0.08);
+            border: 1.5px solid rgba(56,189,248,0.25);
+            border-radius: 12px;
+            color: #7dd3fc;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: center;
+        }
+        .career-btn:hover {
+            background: rgba(56,189,248,0.15);
+            border-color: #38bdf8;
+            color: #e0f2fe;
+        }
+    </style>
+</head>
+<body>
+
+<div class="overlay"></div>
+
+<div class="card" style="max-width:600px; margin:80px auto; text-align:center;">
+
+    <h1>🤖 AI Learning System</h1>
+    <p style="color:#94a3b8;">Generate your personalized learning roadmap</p>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('text', this)">✏️ Enter Text</button>
+        <button class="tab-btn" onclick="switchTab('pdf', this)">📄 Upload PDF</button>
+    </div>
+
+    <!-- TEXT TAB -->
+    <div id="tab-text" class="tab-panel active">
+        <textarea id="inputText" placeholder="Enter what you want to learn or what you already know..."></textarea>
+        <br><br>
+        <button id="generateBtn" onclick="generate()">Generate Learning Path</button>
+    </div>
+
+    <!-- PDF TAB -->
+    <div id="tab-pdf" class="tab-panel">
+        <div class="upload-zone" id="uploadZone">
+            <input type="file" id="pdfInput" accept=".pdf" onchange="onFileSelected(this)">
+            <div class="upload-icon">📁</div>
+            <div>Drag & drop your syllabus PDF here</div>
+            <div style="font-size:0.8rem; margin-top:6px;">or click to browse</div>
+            <div class="file-name" id="fileName"></div>
+        </div>
+        <br>
+        <button id="uploadBtn" onclick="uploadPDF()" style="width:100%;">Generate from PDF</button>
+    </div>
+
+    <div id="status" style="margin-top:15px;"></div>
+
+    <!-- Career Finder CTA -->
+    <div class="divider">or</div>
+    <button class="career-btn" onclick="window.location.href='/career'">
+        🧭 Not sure what to learn? Find your career path →
+    </button>
+
+</div>
+
+<script src="/static/script.js"></script>
+<script>
+    function switchTab(tab, btn) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        document.getElementById('tab-' + tab).classList.add('active');
+        btn.classList.add('active');
+        document.getElementById('status').innerText = '';
+    }
+
+    function onFileSelected(input) {
+        const file = input.files[0];
+        if (file) document.getElementById('fileName').innerText = '📄 ' + file.name;
+    }
+
+    const zone = document.getElementById('uploadZone');
+    zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('dragover'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+    zone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        zone.classList.remove('dragover');
+        const file = e.dataTransfer.files[0];
+        if (file && file.name.endsWith('.pdf')) {
+            document.getElementById('pdfInput').files = e.dataTransfer.files;
+            document.getElementById('fileName').innerText = '📄 ' + file.name;
+        }
+    });
+
+    async function uploadPDF() {
+        const input = document.getElementById('pdfInput');
+        const status = document.getElementById('status');
+
+        if (!input.files || !input.files[0]) {
+            status.innerText = "⚠️ Please select a PDF file first.";
+            status.style.color = "#f59e0b";
+            return;
+        }
+
+        const btn = document.getElementById('uploadBtn');
+        btn.disabled = true;
+        status.innerText = "⏳ Extracting syllabus and generating path...";
+        status.style.color = "#60a5fa";
+
+        const formData = new FormData();
+        formData.append('file', input.files[0]);
+
+        try {
+            const res = await fetch('/upload-pdf', { method: 'POST', body: formData });
+            const data = await res.json();
+
+            if (data.error) {
+                status.innerText = "❌ " + data.error;
+                status.style.color = "#ef4444";
+                btn.disabled = false;
+                return;
+            }
+
+            localStorage.setItem("data", JSON.stringify(data));
+            status.innerText = "✅ Done! Redirecting to dashboard...";
+            status.style.color = "#22c55e";
+            setTimeout(() => { window.location.href = "/dashboard"; }, 700);
+
+        } catch (err) {
+            status.innerText = "❌ Error processing PDF.";
+            status.style.color = "#ef4444";
+            btn.disabled = false;
+        }
+    }
+</script>
+</body>
+</html>

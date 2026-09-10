@@ -1,0 +1,8 @@
+flask
+python-dotenv
+cohere
+networkx
+pdfplumber
+pdf2image
+pytesseract
+Pillow
